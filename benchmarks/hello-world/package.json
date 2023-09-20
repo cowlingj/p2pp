@@ -1,0 +1,22 @@
+{
+  "name": "presentation",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "tsx": "time bash -c \"for i in {1..$COUNT}; do ./node_modules/.bin/tsx index.ts; done\"",
+    "node": "time bash -c \"for i in {1..$COUNT}; do node index.js; done\"",
+    "node-tsc": "time bash -c \"tsc --outFile build/index.js index.ts && for i in {1..$COUNT}; do node build/index.js; done\"",
+    "bun-ts": "time bash -c \"for i in {1..$COUNT}; do bun index.ts; done\"",
+    "bun-js": "time bash -c \"for i in {1..$COUNT}; do bun index.js; done\"",
+    "all": "mkdir -p out && rm -f \"out/results-$COUNT.txt\" && (date >&2; bun tsx; bun node; bun node-tsc; bun bun-ts; bun bun-js) 2>> \"out/results-$COUNT.txt\""
+  },
+  "devDependencies": {
+    "bun-types": "latest",
+    "typescript": "^5.2.2",
+    "tsx": "^3.12.9"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {}
+}
