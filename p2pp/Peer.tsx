@@ -1,28 +1,119 @@
-import { useEffect, useState } from "react";
-import usePeer from "./usePeer";
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import usePeer, { ConnectionInfo } from "./usePeer";
+import { Button, FormControl, FormLabel, Grid, Input, Sheet, Stack, Textarea, Typography } from "@mui/joy";
+
+import { toast } from 'react-toastify';
+import { v4 as uuidv4 } from 'uuid';
+
+const MessageInput = ({send}: {send: (msg: string) => void}) => {
+  const [ messageInput, setMessageInput ] = useState<string>("");
+
+  return <Stack direction="row" spacing={2} alignItems="end" sx={{  overflowAnchor: "auto" }}>
+  <Textarea
+    minRows={2}
+    maxRows={6}
+    placeholder="Type anything…"
+    onChange={(e) => { setMessageInput(e.target.value)}}
+    onKeyDown={(e) => { if (e.ctrlKey && e.key == 'Enter') { send(messageInput); setMessageInput(""); } }}
+    value={messageInput}
+  />
+  <Button onClick={() => { send(messageInput); setMessageInput(""); }}>Send</Button>
+</Stack>
+}
+
+const ClientPage = ({connectionInfo, send}: {connectionInfo: ConnectionInfo, send: (msg: any) => void, receive: (callback: (msg: any) => void) => void}) => {
+  const { messages, setMessages } = useContext(MessagesContext);
+
+  return <Stack
+      direction="column"
+      justifyContent="flex-start"
+      alignItems="center"
+      spacing={2}
+      sx={{
+        height: "100%",
+        overflowY: "scroll",
+        overscrollBehaviorY: "contain",
+        scrollSnapType: "y proximity",
+      }}
+    >
+      <Typography level="h1" sx={{ overflowAnchor: "none"}}>In room: {connectionInfo?.id ?? "unknown"}</Typography>
+      <Stack justifyContent="flex-end" flexGrow={1} textOverflow="scroll" sx={{ overflowAnchor: "none"}}>
+        {
+          Object.entries(messages)
+            .sort((a, b) => a[1].expiry.getTime() - b[1].expiry.getTime())
+            .map(([key, msg]) => <Typography key={key}>{msg.content}</Typography>)
+        }
+      </Stack>
+      <MessageInput send={send}/>
+    </Stack>;
+}
+
+const ConnectionInput = ({connect}: {connect: (id: string) => void}) => {
+  
+  const [value, setValue] = useState("");
+
+  const add = () => {
+    if (value !== "") {
+      connect(value);
+      setValue("");
+    }
+  }
+
+  return <>
+    <FormControl>
+      <FormLabel>Add Connection</FormLabel>
+      <Input type="text" onChange={(e) => setValue(e.target.value)}/>
+    </FormControl>
+    <Button onClick={add}>Add</Button>
+  </>
+}
+
+type Messages = { [key: string]: {content: string, expiry: Date}};
+
+const MessagesContext = createContext<{
+  messages: Messages,
+  setMessages: (messagesOrChangeFn: Messages | ((old: Messages) => Messages)) => void
+}>({ messages: {}, setMessages: () => {} });
 
 export default function Peer() {
-    const { roomCode, host, clients, create, connect } = usePeer();
-    const [ roomCodeInput, setRoomCodeInput ] = useState<string>("");
+    const [ messages, setMessages ] = useState<Messages>({});
+
+    useEffect(() => {
+      console.log(`messages changed: ${JSON.stringify(messages)}`)
+    }, [messages])
+
+    const { connectionInfo, send, receive, connect, disconnectAll } = usePeer();
+
+    function showMessage(msg: string) {
+      const timeout = 60_000
+      const uuid = uuidv4()
+      setMessages({ ...messages, [uuid]: { content: msg, expiry: new Date(new Date().getTime() + timeout)}})
+      setTimeout(() => {
+        const changeFn : (m: Messages) => Messages = (m: Messages) => {const {[uuid]: _, ...rest} = m; return rest}
+        setMessages(changeFn)
+      }, timeout)
+    }
+
+    receive(useCallback((msg) => { showMessage(JSON.stringify(msg)) }, [setMessages]));
+
+    useEffect(() => {
+      console.log(`conection: ${JSON.stringify(connectionInfo)}`)
+    }, [connectionInfo])
   
     useEffect(() => {
-      console.log('clients changed')
-      Object.values(clients).forEach((conn) => {
-        conn.on("data", (data) => {
-          console.log(`got data ${data}`);
-        })
-      })
-    }, [clients])
-
-    useEffect(() => {
-      console.log(`in room: ${roomCode}`)
-    }, [roomCode])
-
-    
-    return <>
-      <button onClick={() => create(roomCodeInput ?? undefined)}>Create Room</button>
-      <input type="text" onChange={(e) => setRoomCodeInput(e.target.value)} value={roomCodeInput}></input>
-      <button onClick={() => roomCodeInput && connect(roomCodeInput)}>Connect</button>
-      {(host && roomCode) ? <button onClick={() => {host.send('test tx btn')}}>TX</button> : null} 
-    </>
+      connectionInfo.errors.forEach(error => toast.error(error))
+    }, [connectionInfo.errors])
+  
+    return <MessagesContext.Provider value={{ messages, setMessages }}>
+      <Sheet sx={{ p: { xs: 2, l: 8}, height: "100%"}}>
+        <ClientPage connectionInfo={connectionInfo} send={(msg) => { send(msg); showMessage(msg)}} receive={receive} />
+        <Button onClick={disconnectAll}>Disconnect All</Button>
+        <Stack>
+          {
+            connectionInfo.connections.map(conn => <Typography key={JSON.stringify(conn)}>{conn[0]} ({conn[1]})</Typography>)
+          }
+        </Stack>
+        <ConnectionInput connect={connect} />
+      </Sheet>
+    </MessagesContext.Provider>
 }

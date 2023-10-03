@@ -1,36 +1,59 @@
 import { renderToReadableStream } from "react-dom/server";
 import { networkInterfaces } from 'node:os';
 import App from "./App";
+import { rm, readdir } from 'node:fs/promises'
+import path from 'node:path'
+
+const buildDir = 'build'
+
+for (let file of await readdir(buildDir)) {
+  await rm(path.join(buildDir, file), { recursive: true })
+}
 
 const build = await Bun.build({
-    entrypoints: [ './hydrate.tsx' ],
+    entrypoints: [ './hydrate.tsx', './node_modules/react-toastify/dist/ReactToastify.css', './node_modules/react-toastify/dist/ReactToastify.css.map' ],
     target: "browser",
     splitting: true,
-    publicPath: '/bundle/',
-    sourcemap: "inline"
+    publicPath: '/build/',
+    sourcemap: "inline",
+    outdir: buildDir,
+    naming: {
+      entry: '[dir]/[name].[ext]',
+      asset: '[dir]/[name].[ext]'
+    }
 })
 
-const outputs = Object.fromEntries(build.outputs.map(out => [`/bundle/${out.path.substring(2)}`, out.text()]))
+if (!build.success) {
+  throw new Error(build.logs.join('\n'))
+}
+
+const outputs = Object.fromEntries(build.outputs.map(out => [`/build/${out.path.substring(2)}`, out.text()]))
 
 const server = Bun.serve({
     async fetch(req) {
 
         const url = new URL(req.url)
-        if (Object.keys(outputs).includes(url.pathname)) {
-            return new Response(await outputs[url.pathname], {
-                headers: { "Content-Type": "text/javascript" }
-            })
+
+        if (url.pathname === "/") {
+          return new Response(await renderToReadableStream(
+            <App />,
+            {
+                bootstrapModules: ['/build/hydrate.js']
+            }
+          ), {
+            headers: { "Content-Type": "text/html" },
+          });
         }
 
-      const stream = await renderToReadableStream(
-        <App />,
-        {
-            bootstrapModules: ['/bundle/hydrate.js']
+        if (url.pathname.startsWith("/build")) {
+          const file = Bun.file(url.pathname.substring(1))
+          return new Response(await file.stream(), {
+            headers: { "Content-Type": file.type }
+          })
         }
-      );
-      return new Response(stream, {
-        headers: { "Content-Type": "text/html" },
-      });
+
+        return new Response("", { status: 404 });
+
     },
   });
 
