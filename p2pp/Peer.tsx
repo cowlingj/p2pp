@@ -21,8 +21,8 @@ const MessageInput = ({send}: {send: (msg: string) => void}) => {
 </Stack>
 }
 
-const ClientPage = ({connectionInfo, send}: {connectionInfo: ConnectionInfo, send: (msg: any) => void, receive: (callback: (msg: any) => void) => void}) => {
-  const { messages, setMessages } = useContext(MessagesContext);
+const ClientPage = ({connectionInfo, send}: {connectionInfo: ConnectionInfo, send: (msg: any) => void}) => {
+  const { messages } = useContext(MessagesContext);
 
   return <Stack
       direction="column"
@@ -75,26 +75,35 @@ const MessagesContext = createContext<{
   setMessages: (messagesOrChangeFn: Messages | ((old: Messages) => Messages)) => void
 }>({ messages: {}, setMessages: () => {} });
 
-export default function Peer() {
-    const [ messages, setMessages ] = useState<Messages>({});
+export default function PeerWrapper() {
+  const [ messages, setMessages ] = useState<Messages>({});
 
-    useEffect(() => {
-      console.log(`messages changed: ${JSON.stringify(messages)}`)
-    }, [messages])
+  function showMessage(msg: string) {
+    const timeout = 60_000
+    const uuid = uuidv4()
+    setMessages({ ...messages, [uuid]: { content: msg, expiry: new Date(new Date().getTime() + timeout)}})
+    setTimeout(() => {
+      const changeFn : (m: Messages) => Messages = (m: Messages) => {const {[uuid]: _, ...rest} = m; return rest}
+      setMessages(changeFn)
+    }, timeout)
+  }
 
-    const { connectionInfo, send, receive, connect, disconnectAll } = usePeer();
+  useEffect(() => {
+    console.log(`messages changed: ${JSON.stringify(messages)}`)
+  }, [messages]);
 
-    function showMessage(msg: string) {
-      const timeout = 60_000
-      const uuid = uuidv4()
-      setMessages({ ...messages, [uuid]: { content: msg, expiry: new Date(new Date().getTime() + timeout)}})
-      setTimeout(() => {
-        const changeFn : (m: Messages) => Messages = (m: Messages) => {const {[uuid]: _, ...rest} = m; return rest}
-        setMessages(changeFn)
-      }, timeout)
-    }
+  console.log("wrapper render");
+  
+  const addMessage = useCallback((msg: string) => { console.log("add", msg); showMessage(JSON.stringify(msg)) }, [setMessages])
 
-    receive(useCallback((msg) => { showMessage(JSON.stringify(msg)) }, [setMessages]));
+  return <MessagesContext.Provider value={{ messages, setMessages }}><Peer addMessage={addMessage} /></MessagesContext.Provider>
+}
+
+function Peer({addMessage}: { addMessage: (msg: string) => void }) {
+
+    const { connectionInfo, send, latestMessage, connect, disconnectAll } = usePeer();
+
+    useEffect(() => { if (latestMessage !== undefined) addMessage(latestMessage.contents) }, [latestMessage, addMessage])
 
     useEffect(() => {
       console.log(`conection: ${JSON.stringify(connectionInfo)}`)
@@ -104,9 +113,8 @@ export default function Peer() {
       connectionInfo.errors.forEach(error => toast.error(error))
     }, [connectionInfo.errors])
   
-    return <MessagesContext.Provider value={{ messages, setMessages }}>
-      <Sheet sx={{ p: { xs: 2, l: 8}, height: "100%"}}>
-        <ClientPage connectionInfo={connectionInfo} send={(msg) => { send(msg); showMessage(msg)}} receive={receive} />
+    return <Sheet sx={{ p: { xs: 2, l: 8}, height: "100%"}}>
+        <ClientPage connectionInfo={connectionInfo} send={(msg) => { send(msg); addMessage("sent " + msg)}} />
         <Button onClick={disconnectAll}>Disconnect All</Button>
         <Stack>
           {
@@ -115,5 +123,5 @@ export default function Peer() {
         </Stack>
         <ConnectionInput connect={connect} />
       </Sheet>
-    </MessagesContext.Provider>
+    
 }

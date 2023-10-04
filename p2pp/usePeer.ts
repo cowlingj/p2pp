@@ -10,7 +10,7 @@ export default function usePeer() {
 
     const [ peer, setPeer ] = useState<Peer | undefined>(() => new Peer(uniqueNamesGenerator({ dictionaries: [adjectives, colors, animals], separator: "-" })));
     const [ connectionInfo, setConnectionInfo ] = useState<ConnectionInfo>({ id: peer?.id, connections: [], errors: [] });
-    const [ onReceive, setOnReceive ] = useState<(msg: any) => void>((msg: any) => {});
+    const [ latestMessage, setLatestMessage ] = useState<{ from: [peer: string, connection: string], contents: string, date: Date}| undefined>(undefined);
 
     useEffect(() => {
         if (peer === undefined) {
@@ -32,7 +32,7 @@ export default function usePeer() {
                     errors: []
                 }))
             });
-            conn.on("data", console.log) // FIXME
+            conn.on("data", (data) => { console.log("rx", data); setLatestMessage({from: [conn.peer, conn.connectionId], contents: JSON.stringify(data), date: new Date()})});
         });
     
         peer.on('error', (e) => {
@@ -49,7 +49,7 @@ export default function usePeer() {
             setConnectionInfo({ id: undefined, connections: [], errors: []});
             setPeer(undefined);
         });
-    }, [peer])
+    }, [peer, setLatestMessage, setConnectionInfo, setPeer])
 
 
     useEffect(() => {
@@ -58,11 +58,15 @@ export default function usePeer() {
         return () => window.removeEventListener('unload', listener);
     }, [peer]);
 
+    useEffect(() => {
+        console.log("new msg", latestMessage);
+    }, [latestMessage])
+
     return {
         connectionInfo,
-        send: (msg: any) => connectionInfo.connections.forEach((conn) => (peer?.getConnection(...conn) as DataConnection | undefined)?.send(msg)),
-        receive: (callback: (msg: any) => void) => {}, // FIXME: setOnReceive(callback),
-        connect: (id: string) => {
+        send: useCallback((msg: string) => connectionInfo.connections.forEach((conn) => (peer?.getConnection(...conn) as DataConnection | undefined)?.send(msg)), [connectionInfo, peer]),
+        latestMessage: latestMessage,
+        connect: useCallback((id: string) => {
             if (peer === undefined) {
                 return
             }
@@ -72,13 +76,13 @@ export default function usePeer() {
                 id,
                 errors: []
             }));
-        },
-        disconnect: (id: string) => peer?.getConnection(peer.id, id)?.close(),
-        disconnectAll: () => peer?.destroy(),
-        reconnect: () => {
+        }, [peer, setConnectionInfo]),
+        disconnect: useCallback((id: string) => peer?.getConnection(peer.id, id)?.close(), [peer]),
+        disconnectAll: useCallback(() => peer?.destroy(), [peer]),
+        reconnect: useCallback(() => {
             const newPeer = new Peer(uniqueNamesGenerator({ dictionaries: [adjectives, colors, animals], separator: "-" })); 
             setPeer(newPeer);
             setConnectionInfo({ id: newPeer?.id, connections: [], errors: [] })
-        }
+        }, [setPeer, setConnectionInfo])
     }
 }
