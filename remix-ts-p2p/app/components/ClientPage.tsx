@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { Button, Divider, Stack, Textarea, Tooltip, Typography } from "@mui/joy";
 
-import { MessagesContext } from "../Peer";
+import { MessagesContext } from "./Peer/Peer";
 
 const MessageInput = ({ send }: { send: (msg: string) => void }) => {
   const [messageInput, setMessageInput] = useState<string>("");

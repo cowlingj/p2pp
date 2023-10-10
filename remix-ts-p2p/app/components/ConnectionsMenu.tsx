@@ -1,7 +1,6 @@
-import { ConnectionInfo } from "../usePeer";
-import { Button, DialogContent, Divider, FormControl, FormLabel, IconButton, Input, List, ListItem, Stack, Typography } from "@mui/joy";
+import type { ConnectionInfo } from "./Peer/usePeer";
+import { Button, DialogContent, Divider, Drawer, FormControl, FormLabel, IconButton, Input, List, ListItem, Stack, Typography } from "@mui/joy";
 import { X } from 'lucide-react';
-import Drawer from '@mui/joy/Drawer';
 import { useState } from "react";
 
 const ConnectionInput = ({ connect }: { connect: (id: string) => void }) => {

@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
-import { FormControl, FormLabel, IconButton, Input, Stack, Switch, Typography } from "@mui/joy";
+import { FormControl, FormLabel, IconButton, Input, Stack, Switch, Typography, Drawer } from "@mui/joy";
 import { X } from 'lucide-react';
 
-import Drawer from '@mui/joy/Drawer';
-import { Options } from "../usePeer";
+import type { Options } from "./Peer/usePeer";
 
 export default function DevMenu({ options, setOptions }: { options: Options, setOptions: React.Dispatch<React.SetStateAction<Options>> }) {
   const [devDrawerOpen, setDevDrawerOpen] = useState(false);

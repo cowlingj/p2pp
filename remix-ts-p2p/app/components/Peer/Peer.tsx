@@ -1,12 +1,13 @@
-import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
-import usePeer, { Message, Options } from "./usePeer";
-import { Button, DialogTitle, Divider, FormControl, FormLabel, Grid, IconButton, Input, MenuButton, Sheet, Stack, Switch, Textarea, Tooltip, Typography, useColorScheme } from "@mui/joy";
-import { Cog, Cross, Moon, Sun, SunMoon } from 'lucide-react';
+import { createContext, useEffect, useState } from "react";
+import type { Message, Options } from "./usePeer";
+import usePeer from "./usePeer";
+import { Button, IconButton, Sheet, Stack, Tooltip, Typography, useColorScheme } from "@mui/joy";
+import { Cog, Moon, Sun } from 'lucide-react';
 
 import { toast } from 'react-toastify';
-import DevMenu from "./components/DevMenu";
-import { ConnectionsMenu } from "./components/ConnectionsMenu";
-import ClientPage from "./components/ClientPage";
+import DevMenu from "../DevMenu";
+import { ConnectionsMenu } from "../ConnectionsMenu";
+import ClientPage from "../ClientPage";
 
 export const MessagesContext = createContext<{
   messages: Message[],
@@ -28,16 +29,22 @@ export default function Peer() {
     port: 443,
     secure: true,
   });
-  const { connectionInfo, send, messages, connect, disconnect, disconnectAll } = usePeer(devOptions);
+  const { connectionInfo, send, messages, connect, disconnect, init } = usePeer(devOptions);
   const { mode, setMode } = useColorScheme();
 
   useEffect(() => {
     connectionInfo.errors.forEach(error => toast.error(error))
   }, [connectionInfo.errors])
 
+  useEffect(() => {
+    if (connectionsDrawerOpen && !connectionInfo.id) {
+      init();
+    }
+  }, [connectionInfo, init, connectionsDrawerOpen])
+
   return <MessagesContext.Provider value={{ messages }}>
     <Stack sx={{ height: "100%" }}>
-      <ConnectionsMenu isOpen={connectionsDrawerOpen} close={() => setConnectionsDrawerOpen(false)} connectionInfo={connectionInfo} connect={connect} disconnectAll={disconnectAll} disconnect={disconnect} />
+      <ConnectionsMenu isOpen={connectionsDrawerOpen} close={() => setConnectionsDrawerOpen(false)} connectionInfo={connectionInfo} connect={connect} disconnectAll={init} disconnect={disconnect} />
       <DevMenu options={devOptions} setOptions={setDevOptions}></DevMenu>
 
       <Sheet>

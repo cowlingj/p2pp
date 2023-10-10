@@ -21,6 +21,6 @@ export default function Toast() {
     'text-color-dark': theme.palette.text.primary,
   });
 
-  const { mode, setMode } = useColorScheme();
+  const { mode } = useColorScheme();
   return <CssVarsProvider theme={extendedTheme}><ToastContainer theme={mode === 'dark' ? 'dark' : 'light'} /></CssVarsProvider>
 }
