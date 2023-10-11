@@ -1,18 +1,50 @@
-# Building a Peer to Peer System with JavaScript
+---
+title: P2P w/ TS
+revealOptions:
+  transition: 'none'
+  progress: false
+  slideNumber: false
+  showSlideNumber: 'speaker'
+  controls: false
+---
+
+# Building a Peer to Peer System with TypeScript
 
 Jonathan 
 
 ---
 
-## Traditional (Centralized) Networking
+![](./images/peers.png)
 
----
+Note: test
 
-## Peer to Peer Networking
+----
 
----
+![](./images/signalling-1.png)
 
-## Demo
+----
+
+![](./images/signalling-2.png)
+
+----
+
+![](./images/step-1.png)
+
+----
+
+![](./images/step-2.png)
+
+----
+
+![](./images/step-3.png)
+
+----
+
+![](./images/step-4.png)
+
+----
+
+![](./images/turn-5.png)
 
 ---
 
@@ -23,9 +55,7 @@ Jonathan
 - Less Control
 - Storing data is difficult
 
----
-
-## Use Cases
+Notes: Use Cases
 
 - Gaming
 - File/data sharing
