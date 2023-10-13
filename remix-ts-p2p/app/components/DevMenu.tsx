@@ -22,8 +22,8 @@ export default function DevMenu({ options, setOptions }: { options: Options, set
       </IconButton>
       <Typography>Demo Options:</Typography>
       <FormControl>
-        <FormLabel>Misbehave</FormLabel>
-        <Switch checked={tempOptions.misbehaving} onChange={(e) => { setTempOptions((options: Options) => ({ ...options, misbehaving: e.target.checked })) }} />
+        <FormLabel>Timeout (ms)</FormLabel>
+        <Input type="number" value={tempOptions.timeout} onChange={(e) => { setTempOptions((options: Options) => ({ ...options, timeout: parseInt(e.target.value) })) }} />
       </FormControl>
       <FormControl>
         <FormLabel>Host</FormLabel>
@@ -32,6 +32,10 @@ export default function DevMenu({ options, setOptions }: { options: Options, set
       <FormControl>
         <FormLabel>Port</FormLabel>
         <Input type="number" value={tempOptions.port} onChange={(e) => { setTempOptions((options: Options) => ({ ...options, port: parseInt(e.target.value) })) }} />
+      </FormControl>
+      <FormControl>
+        <FormLabel>Path</FormLabel>
+        <Input type="text" value={tempOptions.path} onChange={(e) => { setTempOptions((options: Options) => ({ ...options, path: e.target.value })) }} />
       </FormControl>
       <FormControl>
         <FormLabel>Secure</FormLabel>

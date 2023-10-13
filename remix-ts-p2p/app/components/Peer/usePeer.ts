@@ -9,17 +9,24 @@ export type ConnectionInfo = { connections: [peer: string, connection: string][]
 export type Message = { content: string, from: [peer: string, connection: string], date: Date, id: string };
 type Messages = { [key: string]: Message };
 
-const timeout = 10_000;
-
 export type Options = {
-    misbehaving: boolean,
+    timeout: number,
     host: string,
     port: number,
+    path: string,
     secure: boolean,
 }
 
 function createPeer(options?: PeerOptions): Peer | undefined {
-    return Peer !== undefined ? new Peer(uniqueNamesGenerator({ dictionaries: [adjectives, colors, animals], separator: "-" }), { host: options?.host, port: options?.port, secure: options?.secure }) : undefined
+    return Peer !== undefined ? new Peer(
+        uniqueNamesGenerator({ dictionaries: [adjectives, colors, animals], separator: "-" }),
+        {
+            host: options?.host,
+            port: options?.port,
+            path: options?.path,
+            secure: options?.secure
+        }
+    ) : undefined
 }
 
 export default function usePeer(options: Options) {
@@ -75,8 +82,7 @@ export default function usePeer(options: Options) {
                     date: new Date()
                 }
             });
-            if (!optionsRef.current.misbehaving)
-                setTimeout(() => setMessages((m: Messages) => { const { [uuid]: _, ...rest } = m; return rest }), timeout);
+            setTimeout(() => setMessages((m: Messages) => { const { [uuid]: _, ...rest } = m; return rest }), optionsRef.current.timeout);
             connectionInfo.connections.forEach((conn) => {
                 const peerConnection = peer?.getConnection(...conn);
                 if (
@@ -142,8 +148,7 @@ export default function usePeer(options: Options) {
                     date: new Date()
                 }
             });
-            if (!optionsRef.current.misbehaving)
-                setTimeout(() => setMessages((m: Messages) => { const { [uuid]: _, ...rest } = m; return rest; }), timeout);
+            setTimeout(() => setMessages((m: Messages) => { const { [uuid]: _, ...rest } = m; return rest; }), optionsRef.current.timeout);
         });
 
     }
@@ -167,6 +172,7 @@ function useOptionsReInit(
         }
         if (options.host === prevOptionsRef.current.host
             && options.port === prevOptionsRef.current.port
+            && options.path === prevOptionsRef.current.path
             && options.secure === prevOptionsRef.current.secure) {
             return;
         }

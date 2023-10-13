@@ -1,7 +1,8 @@
-import type { ConnectionInfo } from "./Peer/usePeer";
+import type { ConnectionInfo, Options } from "./Peer/usePeer";
 import { Button, DialogContent, Divider, Drawer, FormControl, FormLabel, IconButton, Input, List, ListItem, Stack, Typography } from "@mui/joy";
 import { X } from 'lucide-react';
 import { useState } from "react";
+import useListPeers from "./useListPeers";
 
 const ConnectionInput = ({ connect }: { connect: (id: string) => void }) => {
 
@@ -23,7 +24,9 @@ const ConnectionInput = ({ connect }: { connect: (id: string) => void }) => {
   </Stack>
 }
 
-export function ConnectionsMenu({ isOpen, close, connectionInfo, connect, disconnectAll, disconnect }: { isOpen: boolean; close: () => void; connectionInfo: ConnectionInfo; connect: (id: string) => void; disconnectAll: () => void; disconnect: (peer: string, connection: string) => void; }) {
+export function ConnectionsMenu({ isOpen, close, connectionInfo, options, connect, disconnectAll, disconnect }: { isOpen: boolean; close: () => void; connectionInfo: ConnectionInfo; options: Options, connect: (id: string) => void; disconnectAll: () => void; disconnect: (peer: string, connection: string) => void; }) {
+  const peers = useListPeers(isOpen, options, connectionInfo);
+
   return <Drawer open={isOpen} onClose={close} size="lg">
     <Stack p={2} spacing={2}>
       <IconButton onClick={close} sx={{ alignSelf: "flex-end" }}>
@@ -37,10 +40,14 @@ export function ConnectionsMenu({ isOpen, close, connectionInfo, connect, discon
       <Typography>Connections</Typography>
       <DialogContent>
         <List>
-          {connectionInfo.connections.map(conn => <ListItem key={`${conn[0]}-${conn[1]}`}>
+          {peers.map(conn => <ListItem key={`${conn[0]}-${conn[1]}`}>
             <Stack direction="row" justifyContent="space-between" width="100%">
               <Typography>{conn[0]}</Typography>
-              <Button variant="plain" onClick={() => disconnect(...conn)}>Disconnect</Button>
+              {
+                conn[1] !== undefined
+                  ? <Button variant="plain" onClick={() => disconnect(conn[0], conn[1]!)}>Disonnect</Button>
+                  : <Button variant="plain" onClick={() => connect(conn[0])}>Connect</Button>
+              }
             </Stack>
           </ListItem>
           )}

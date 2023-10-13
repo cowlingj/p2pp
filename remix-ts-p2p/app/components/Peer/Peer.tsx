@@ -23,13 +23,14 @@ function NoConnections({ openDraw }: { openDraw: () => void }) {
 export default function Peer() {
 
   const [connectionsDrawerOpen, setConnectionsDrawerOpen] = useState(false);
-  const [devOptions, setDevOptions] = useState<Options>({
-    misbehaving: false,
-    host: "0.peerjs.com",
+  const [options, setOptions] = useState<Options>({
+    timeout: 60_000,
+    host: "proud-snow-7945.fly.dev",
     port: 443,
+    path: '/app',
     secure: true,
   });
-  const { connectionInfo, send, messages, connect, disconnect, init } = usePeer(devOptions);
+  const { connectionInfo, send, messages, connect, disconnect, init } = usePeer(options);
   const { mode, setMode } = useColorScheme();
 
   useEffect(() => {
@@ -44,8 +45,8 @@ export default function Peer() {
 
   return <MessagesContext.Provider value={{ messages }}>
     <Stack sx={{ height: "100%" }}>
-      <ConnectionsMenu isOpen={connectionsDrawerOpen} close={() => setConnectionsDrawerOpen(false)} connectionInfo={connectionInfo} connect={connect} disconnectAll={init} disconnect={disconnect} />
-      <DevMenu options={devOptions} setOptions={setDevOptions}></DevMenu>
+      <ConnectionsMenu isOpen={connectionsDrawerOpen} close={() => setConnectionsDrawerOpen(false)} connectionInfo={connectionInfo} options={options} connect={connect} disconnectAll={init} disconnect={disconnect} />
+      <DevMenu options={options} setOptions={setOptions}></DevMenu>
 
       <Sheet>
         <Tooltip title="Manage Connections">
