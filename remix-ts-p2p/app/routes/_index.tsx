@@ -13,8 +13,8 @@ export const links: LinksFunction = () => {
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "New Remix App" },
-    { name: "description", content: "Welcome to Remix!" },
+    { title: "P2P Demo" },
+    { name: "description", content: "Peer to Peer application demo" },
     { rel: "stylesheet", href: reactToastifyCss }
   ];
 };
