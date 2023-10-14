@@ -63,7 +63,7 @@ export default function Peer() {
 
       <Stack p={{ xs: 2, l: 8 }} flexGrow={1}>
         {messages.length === 0 && connectionInfo.connections.length === 0 && <NoConnections openDraw={() => setConnectionsDrawerOpen(true)} />}
-        {(connectionInfo.connections.length > 0 || messages.length > 0) && <ClientPage send={(msg) => send(msg)} />}
+        {(connectionInfo.connections.length > 0 || messages.length > 0) && <ClientPage send={(msg) => send(msg)} connectionInfo={connectionInfo} />}
       </Stack>
     </Stack>
   </MessagesContext.Provider>

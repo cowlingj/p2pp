@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import { Button, Divider, Stack, Textarea, Tooltip, Typography } from "@mui/joy";
 
 import { MessagesContext } from "./Peer/Peer";
+import type { ConnectionInfo } from "./Peer/usePeer";
 
 const MessageInput = ({ send }: { send: (msg: string) => void }) => {
   const [messageInput, setMessageInput] = useState<string>("");
@@ -21,7 +22,7 @@ const MessageInput = ({ send }: { send: (msg: string) => void }) => {
   </Stack>
 }
 
-export default function ClientPage({ send }: { send: (msg: any) => void }) {
+export default function ClientPage({ send, connectionInfo }: { send: (msg: any) => void, connectionInfo: ConnectionInfo }) {
   const { messages } = useContext(MessagesContext);
 
   return <Stack
@@ -41,7 +42,11 @@ export default function ClientPage({ send }: { send: (msg: any) => void }) {
       {
         messages
           .sort((a, b) => a.date.getTime() - b.date.getTime())
-          .map((msg) => <Typography key={msg.id}>{msg.content}</Typography>)
+          .map((msg) => <Stack key={msg.id} p={2}>
+              <Typography fontStyle="italic" fontWeight={msg.from[0] === connectionInfo.id ? "bold" : "regular"}>{msg.from[0]}{msg.from[0] === connectionInfo.id && " (You)"}:</Typography>
+              <Typography fontWeight={msg.from[0] === connectionInfo.id ? "bold" : "regular"} sx={{ paddingInlineStart: 2 }}>{msg.content}</Typography>
+            </Stack>
+          )
       }
     </Stack>
     <Divider />
