@@ -15,7 +15,7 @@ export const MessagesContext = createContext<{
 
 function NoConnections({ openDraw }: { openDraw: () => void }) {
   return <Stack height="100%" justifyContent="center" alignItems="center">
-    <Typography>You have No Connections</Typography>
+    <Typography>You have no connections</Typography>
     <Button onClick={openDraw} variant="plain">Add Some</Button>
   </Stack>
 }
