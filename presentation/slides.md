@@ -10,59 +10,41 @@ revealOptions:
 
 # Building a Peer to Peer System with TypeScript
 
-Jonathan 
+Jonathan Cowling - [linkedin.com/in/jonathan-cowling](https://www.linkedin.com/in/jonathan-cowling/)
 
 ---
 
-![](./images/peers.png)
+## How to Use PeerJS
 
-Note: test
+1. Create a peer: `const peer = new Peer("optional-id");`
+2. Create a connection: `const connection = peer.connect("other-peer-id");`
+3. Receive connections: `peer.on("connect", (connection) => { ... });`
+4. Send a message: `connection.send("string, blob, whatever")`
+5. Receive messages: `connection.on("data", (data) => { ... });`
 
-----
-
-![](./images/signalling-1.png)
-
-----
-
-![](./images/signalling-2.png)
-
-----
-
-![](./images/step-1.png)
-
-----
-
-![](./images/step-2.png)
-
-----
-
-![](./images/step-3.png)
-
-----
-
-![](./images/step-4.png)
-
-----
-
-![](./images/turn-5.png)
+> See: [https://peerjs.com/](https://peerjs.com/)
 
 ---
 
-## Features
+## Could a Peer to Peer solution work for you?
 
-- Less Bandwidth Use
-- Less Visibility
-- Less Control
-- Storing data is difficult
+1. How important is the data to your org?
+2. How personal is it to users?
+3. How much throughput are you expecting?
+4. How varied are the devices/peers?
+5. How long does data need to last?
 
-Notes: Use Cases
+Notes:
+
+Common use Cases:
 
 - Gaming
-- File/data sharing
-- Voice & Video Applications
-- Messaging
+- File sharing
+- Voice & Video
 
 ---
 
 ## Learn More
 
+- https://peerjs.com/
+- https://eytanmanor.medium.com/an-architectural-overview-for-web-rtc-a-protocol-for-implementing-video-conferencing-e2a914628d0e
