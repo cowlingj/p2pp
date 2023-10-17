@@ -12,6 +12,27 @@ revealOptions:
 
 Jonathan Cowling - [linkedin.com/in/jonathan-cowling](https://www.linkedin.com/in/jonathan-cowling/)
 
+Notes:
+- Introduction
+- Story:
+  - Inspiration for app
+  - Functionality I want
+  - Where I'm starting (Demo)
+
+---
+
+# Peer 2 Peer Connectivity
+
+Notes:
+- P2P vs client/server paradigm
+
+----
+
+# *
+
+Notes:
+Whenever I mention "No servers"
+
 ---
 
 ## How to Use PeerJS
@@ -28,7 +49,7 @@ Jonathan Cowling - [linkedin.com/in/jonathan-cowling](https://www.linkedin.com/i
 
 ## Could a Peer to Peer solution work for you?
 
-1. How important is the data to your org?
+1. How important is the data to the org?
 2. How personal is it to users?
 3. How much throughput are you expecting?
 4. How varied are the devices/peers?
@@ -36,8 +57,16 @@ Jonathan Cowling - [linkedin.com/in/jonathan-cowling](https://www.linkedin.com/i
 
 Notes:
 
-Common use Cases:
+Benefits:
+- Bandwidth
+- Privacy
 
+Challenges:
+- Persistence
+- Discovery
+- Device heterogeneity
+
+Common use Cases:
 - Gaming
 - File sharing
 - Voice & Video
