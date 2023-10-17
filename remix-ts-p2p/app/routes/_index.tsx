@@ -28,7 +28,7 @@ export default function Index() {
     <CssVarsProvider defaultMode="system">
     <CssBaseline />
     <Toast />
-    <Sheet sx={{ height: "100vh", width: "100vw" }}>
+    <Sheet sx={{ height: "100dvh", width: "100dvw" }}>
       <Suspense fallback={<Fallback />}>
         <Peer />
       </Suspense>
