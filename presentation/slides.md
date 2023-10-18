@@ -12,8 +12,10 @@ revealOptions:
 
 Jonathan Cowling - [linkedin.com/in/jonathan-cowling](https://www.linkedin.com/in/jonathan-cowling/)
 
+Presentation & Slides: [https://github.com/cowlingj/p2pp](https://github.com/cowlingj/p2pp/)
+
 Notes:
-- Introduction
+- Introduction (clients: ecommerce, banking, to public sector)
 - Story:
   - Inspiration for app
   - Functionality I want
@@ -21,48 +23,24 @@ Notes:
 
 ---
 
-# Peer 2 Peer Connectivity
-
-Notes:
-- P2P vs client/server paradigm
-
-----
-
-# *
-
-Notes:
-Whenever I mention "No servers"
-
----
-
 ## How to Use PeerJS
 
-Create a peer:
 ```
+// Create a peer
 const peer = new Peer("optional-id");
-```
-Create a connection:
-```
+// Create a connection
 const connection = peer.connect("other-peer-id");
-```
-Send a message:
-```
-connection.send("string, blob, whatever")
-```
-
-----
-
-Receive connections:
-```
+// Send a message
+connection.send("string, blob, whatever");
+// Receive connections
 peer.on("connect", (connection) => { ... });
-```
-Receive messages:
-```
+// Receive messages
 connection.on("data", (data) => { ... });
 ```
 
-> Full Documentation: [https://peerjs.com/](https://peerjs.com/)
-
+- PeerJS Docs: [https://peerjs.com](https://peerjs.com/)  
+- WebRTC Overview (by Eytan Manor):  
+  [https://tinyurl.com/59wcpar4](https://eytanmanor.medium.com/an-architectural-overview-for-web-rtc-a-protocol-for-implementing-video-conferencing-e2a914628d0e/)
 ---
 
 ## Could a Peer to Peer solution work for you?
@@ -76,22 +54,10 @@ connection.on("data", (data) => { ... });
 Notes:
 
 Benefits:
-- Bandwidth
-- Privacy
+- Bandwidth & Privacy
 
 Challenges:
-- Persistence
-- Discovery
-- Device heterogeneity
+- Persistence, Discovery &Device heterogeneity
 
 Common use Cases:
-- Gaming
-- File sharing
-- Voice & Video
-
----
-
-## Learn More
-
-- https://peerjs.com/
-- https://eytanmanor.medium.com/an-architectural-overview-for-web-rtc-a-protocol-for-implementing-video-conferencing-e2a914628d0e
+- Gaming, File sharing, Voice & Video
