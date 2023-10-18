@@ -37,13 +37,31 @@ Whenever I mention "No servers"
 
 ## How to Use PeerJS
 
-1. Create a peer: `const peer = new Peer("optional-id");`
-2. Create a connection: `const connection = peer.connect("other-peer-id");`
-3. Receive connections: `peer.on("connect", (connection) => { ... });`
-4. Send a message: `connection.send("string, blob, whatever")`
-5. Receive messages: `connection.on("data", (data) => { ... });`
+Create a peer:
+```
+const peer = new Peer("optional-id");
+```
+Create a connection:
+```
+const connection = peer.connect("other-peer-id");
+```
+Send a message:
+```
+connection.send("string, blob, whatever")
+```
 
-> See: [https://peerjs.com/](https://peerjs.com/)
+----
+
+Receive connections:
+```
+peer.on("connect", (connection) => { ... });
+```
+Receive messages:
+```
+connection.on("data", (data) => { ... });
+```
+
+> Full Documentation: [https://peerjs.com/](https://peerjs.com/)
 
 ---
 
