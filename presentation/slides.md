@@ -15,8 +15,13 @@ Jonathan Cowling - [linkedin.com/in/jonathan-cowling](https://www.linkedin.com/i
 Presentation & Slides: [https://github.com/cowlingj/p2pp](https://github.com/cowlingj/p2pp/)
 
 Notes:
-- Introduction (clients: ecommerce, banking, to public sector)
-- Story:
+Prep:
+- Browser tab(s): presentation, remix x 2, localhost:3000
+- VSCode tab(s): Main.tsx (& run bun in terminal)
+
+Introduction: (clients: ecommerce, banking, to public sector)
+
+Story:
   - Inspiration for app
   - Functionality I want
   - Where I'm starting (Demo)
@@ -57,7 +62,7 @@ Benefits:
 - Bandwidth & Privacy
 
 Challenges:
-- Persistence, Discovery &Device heterogeneity
+- Persistence, Discovery & Device heterogeneity
 
 Common use Cases:
 - Gaming, File sharing, Voice & Video
