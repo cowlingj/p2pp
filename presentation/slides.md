@@ -12,7 +12,9 @@ revealOptions:
 
 Jonathan Cowling - [linkedin.com/in/jonathan-cowling](https://www.linkedin.com/in/jonathan-cowling/)
 
-Presentation & Slides: [https://github.com/cowlingj/p2pp](https://github.com/cowlingj/p2pp/)
+Code & Slides: [github.com/cowlingj/p2pp](https://github.com/cowlingj/p2pp/)
+
+Demo: [blue-dawn-2443.fly.dev](https://blue-dawn-2443.fly.dev/)
 
 Notes:
 Prep:
